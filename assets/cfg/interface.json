@@ -1,0 +1,18 @@
+{
+    "font": "arial",
+    "game_title": "Juego de guerreros",
+    "instructions": "P: Pausar el juego. Nùmero de enemigos para desapacer uno: ",
+    "text_color": {
+        "R": 255,
+        "G": 255,
+        "B": 255
+    },
+    "text_color_ready_power": {
+        "R": 15,
+        "G": 255,
+        "B": 0
+    },
+    "text_size": 10,
+    "dead_enemies_title": "Enemigos muertos consecutivos",
+    "active_power": "Poder activado"
+}

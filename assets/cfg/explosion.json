@@ -1,0 +1,19 @@
+{
+    "image_player": "assets/img/invaders_player_explosion.png",
+    "image_enemy": "assets/img/invaders_enemy_explosion.png",
+    "sound_player_die": "assets/snd/player_die.ogg",
+    "sound_enemy_die": "assets/snd/enemy_die.ogg",
+    "sound_for_elimination": "assets/snd/explosion.ogg",
+    "consecutive_enemies_to_eliminate_one": 2,
+    "animations": {
+        "number_frames": 4,
+        "list": [
+            {
+                "name": "EXPLODE",
+                "start": 0,
+                "end": 7,
+                "framerate": 16
+            }
+        ]
+    }
+}

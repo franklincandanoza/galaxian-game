@@ -1,0 +1,13 @@
+{
+    "title": "MISO - Invaders!",
+    "size": {
+        "w": 520,
+        "h": 430
+    },
+    "bg_color": {
+        "r": 0,
+        "g": 0,
+        "b": 0
+    },
+    "framerate": 60
+}
