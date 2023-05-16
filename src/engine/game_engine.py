@@ -8,7 +8,6 @@ import random
 from src.ecs.systems.s_collision_player_enemy import system_collision_player_enemy
 from src.ecs.systems.s_collision_enemy_bullet import system_collision_enemy_bullet
 
-from src.ecs.systems.s_enemy_spawner import system_enemy_spawner
 from src.ecs.systems.s_enemy_spawner_new import system_enemy_spawner_new
 from src.ecs.systems.s_input_player import system_input_player
 from src.ecs.systems.s_movement import system_movement
@@ -19,7 +18,6 @@ from src.ecs.systems.s_screen_star import system_screen_star
 from src.ecs.systems.s_screen_bullet import system_screen_bullet
 
 from src.ecs.systems.s_player_state import system_player_state
-from src.ecs.systems.s_enemy_elimination import system_enemy_elimination
 from src.ecs.systems.s_explosion_kill import system_explosion_kill
 from src.ecs.systems.s_enemy_hunter_state import system_enemy_hunter_state
 from src.ecs.systems.s_synchronization_enemies import system_synchronization_enemies
