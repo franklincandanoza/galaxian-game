@@ -180,10 +180,10 @@ class GameEngine:
             self.num_bullets = len(self.ecs_world.get_component(CTagBullet))
             
     def _draw(self):
-        
-        self.screen.fill(self.bg_color)
-        system_rendering(self.ecs_world, self.screen)
-        pygame.display.flip()
+        if not self.is_paused:
+            self.screen.fill(self.bg_color)
+            system_rendering(self.ecs_world, self.screen)
+            pygame.display.flip()
 
     def _clean(self):
         self.ecs_world.clear_database()
