@@ -31,7 +31,7 @@ from src.ecs.components.tags.c_tag_bullet import CTagBullet
 
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 
-from src.create.prefab_creator import create_enemy_spawner, create_input_player, create_player_square, create_bullet
+from src.create.prefab_creator import create_input_player, create_player_square, create_bullet
 from src.create.prefab_creator  import create_game_info, update_dead_enemy_info, create_instructions_info, create_start, create_enemy_spawner_new
 
 
@@ -115,7 +115,6 @@ class GameEngine:
         
         
         create_enemy_spawner_new(self.ecs_world, self.level_01_cfg)
-        #create_enemy_spawner(self.ecs_world, self.level_01_cfg)
         create_input_player(self.ecs_world)
         self._create_stars()
 
@@ -156,7 +155,6 @@ class GameEngine:
     def _update(self):
         system_screen_star(self.ecs_world, self.screen)
         if not self.is_paused:
-            #system_enemy_spawner(self.ecs_world, self.enemies_cfg, self.delta_time)
             
             system_enemy_spawner_new(self.ecs_world, self.enemies_cfg, self.screen)
             system_movement(self.ecs_world, self.delta_time)
@@ -179,7 +177,6 @@ class GameEngine:
             #system_enemy_hunter_state(self.ecs_world, self._player_entity, self.enemies_cfg["TypeHunter"])
 
             system_animation(self.ecs_world, self.delta_time)
-            #system_enemy_elimination(self.ecs_world, player_entity=self._player_entity, explosion_info= self.explosion_cfg, interface_info=self.interface_cfg, actived_power = self.actived_power)
 
             self.ecs_world._clear_dead_entities()
             self.num_bullets = len(self.ecs_world.get_component(CTagBullet))

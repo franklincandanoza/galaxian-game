@@ -116,15 +116,6 @@ def create_text_dead_enemies(world: esper.World, pos: pygame.Vector2, enemy_info
                         CAnimation(enemy_info["animations"]))
     world.add_component(enemy_entity, CTagEnemy("Hunter"))
 
-
-
-
-
-def create_enemy_spawner(world: esper.World, level_data: dict):
-    spawner_entity = world.create_entity()
-    world.add_component(spawner_entity,
-                        CEnemySpawner(level_data["enemy_spawn_events"]))
-    
 def create_enemy_spawner_new(world: esper.World, level_data: dict):
     spawner_entity = world.create_entity()
     world.add_component(spawner_entity,
