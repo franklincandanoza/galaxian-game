@@ -82,10 +82,7 @@ def create_enemy_new_by_type(world: esper.World, pos_in: pygame.Vector2, enemy_i
     enemy_surface = ServiceLocator.images_service.get(path = enemy_info["image"])
     
     #new_size = (15, 15)
-    
     #scaled_surface = pygame.transform.scale(enemy_surface, new_size)
-    
-    
     size = enemy_surface.get_size()
     size = (size[0] / enemy_info["animations"]["number_frames"], size[1])
     pos = pygame.Vector2(pos_in.x - (size[0] / 2),

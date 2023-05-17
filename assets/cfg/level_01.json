@@ -24,11 +24,11 @@
         },
         {
             "enemy_type": "Type03",
-            "quantity": 8
+            "quantity": 10
         },
         {
             "enemy_type": "Type04",
-            "quantity": 10
+            "quantity": 14
         
         }
     ]
