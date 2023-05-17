@@ -319,8 +319,9 @@ def create_player_square(world: esper.World, player_info: dict, player_lvl_info:
     
     size = player_sprite.get_size()
     size = (size[0] / player_info["animations"]["number_frames"], size[1])
-    pos = pygame.Vector2(player_lvl_info["position"]["x"] - (size[0] / 2),
-                         player_lvl_info["position"]["y"] - (size[1] / 2))
+
+    pos = pygame.Vector2(player_lvl_info["player_spawn"]["position"]["x"] - (size[0] / 2),
+                         player_lvl_info["player_spawn"]["position"]["y"] - (size[1] / 2))
     vel = pygame.Vector2(0, 0)
     player_entity = create_sprite(world, pos, vel, player_sprite)
     world.add_component(player_entity, CTagPlayer())

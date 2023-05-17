@@ -1,0 +1,14 @@
+{
+    "time_to_ready":3.2,
+    "time_to_show_ready":1,
+    "time_to_hide_ready":3,
+    "sound": "assets/snd/game_start.ogg",
+    "text": "READY",
+    "font":"times",
+    "size":40,
+    "color":{
+        "r":250,
+        "g":250,
+        "b":250
+    }
+}

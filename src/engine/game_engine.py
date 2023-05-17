@@ -2,6 +2,7 @@ import json
 import pygame
 import esper
 from src.ecs.components.c_enemy_basic_fire import CEnemyBasicFire
+from src.ecs.components.c_ready_level import CReadyLevel
 from src.ecs.systems.s_animation import system_animation
 import asyncio
 import random
@@ -34,6 +35,8 @@ from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 
 from src.create.prefab_creator import create_input_player, create_player_square, create_bullet
 from src.create.prefab_creator  import create_game_info, update_dead_enemy_info, create_instructions_info, create_start, create_enemy_spawner_new
+from src.ecs.systems.s_system_ready import system_ready_level
+from src.engine.service_locator import ServiceLocator
 
 
 class GameEngine:
@@ -50,6 +53,7 @@ class GameEngine:
         self.is_running = False
         self.is_paused = False
         self.actived_power = False
+        self.is_ready = False
         self.framerate = self.window_cfg["framerate"]
         self.delta_time = 0
         self.bg_color = pygame.Color(self.window_cfg["bg_color"]["r"],
@@ -77,6 +81,8 @@ class GameEngine:
             self.interface_cfg = json.load(interface_file)
         with open("assets/cfg/starfield.json") as star_field_file:
             self.star_field_cfg = json.load(star_field_file)
+        with open("assets/cfg/game_start.json") as game_start_file:
+            self.game_start_cfg = json.load(game_start_file)
             
     def text_objects(self, text, font):
         textSurface = font.render(text, True, (255,0,0))
@@ -105,10 +111,7 @@ class GameEngine:
         self._clean()
 
     def _create(self):
-        self._player_entity = create_player_square(self.ecs_world, self.player_cfg, self.level_01_cfg["player_spawn"])
-        self._player_c_v = self.ecs_world.component_for_entity(self._player_entity, CVelocity)
-        self._player_c_t = self.ecs_world.component_for_entity(self._player_entity, CTransform)
-        self._player_c_s = self.ecs_world.component_for_entity(self._player_entity, CSurface)
+
        
         enemy_basic_fire = self.ecs_world.create_entity()
 
@@ -121,7 +124,15 @@ class GameEngine:
         
         create_enemy_spawner_new(self.ecs_world, self.level_01_cfg)
         create_input_player(self.ecs_world)
+        
+        
+        ready_level = self.ecs_world.create_entity()
+
+        self.ecs_world.add_component(ready_level,
+                         CReadyLevel(self.game_start_cfg))
+        
         self._create_stars()
+        ServiceLocator.sounds_service.play(self.game_start_cfg["sound"])
 
     def _create_stars(self)->None:
         y_window_zize = self.window_cfg["size"]["h"] # Verticañ
@@ -141,6 +152,7 @@ class GameEngine:
             current_x_position = x_position
         # La posición de arranque de cada estrella es aleatorio en Y
         
+        
     def _calculate_time(self):
         self.clock.tick(self.framerate)
         self.delta_time = self.clock.get_time() / 1000.0
@@ -151,15 +163,18 @@ class GameEngine:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_p:
                 self.is_paused = not self.is_paused
                 self.pause()
-            
-            system_input_player(self.ecs_world, event, self._do_action)
-            if event.type == pygame.QUIT:
-                self.is_running = False
+            if self.is_ready:
+                system_input_player(self.ecs_world, event, self._do_action)
+                if event.type == pygame.QUIT:
+                    self.is_running = False
             
    
     def _update(self):
         system_screen_star(self.ecs_world, self.screen)
         if not self.is_paused:
+            if not self.is_ready:
+                system_ready_level(self.ecs_world,self.delta_time,self.game_start_cfg,self.screen)
+                self._is_level_ready(self.ecs_world)
             
             system_enemy_spawner_new(self.ecs_world, self.enemies_cfg, self.screen)
             system_movement(self.ecs_world, self.delta_time)
@@ -170,17 +185,17 @@ class GameEngine:
             system_screen_player(self.ecs_world, self.screen)
             
             system_screen_bullet(self.ecs_world, self.screen)
-            
-            system_basic_enemy_fire(self.ecs_world,self.delta_time, self.level_01_cfg["enemy_basic_fire"],self.bullet_cfg["enemy"])
-            system_collision_player_bullet(self.ecs_world, self._player_entity,
-                                  self.level_01_cfg,self.explosion_cfg)
-            system_collision_enemy_bullet(self.ecs_world, self.explosion_cfg, self._player_entity)
-            system_collision_player_enemy(self.ecs_world, self._player_entity,
-                                        self.level_01_cfg, self.explosion_cfg)
+            if self.is_ready:
+                system_basic_enemy_fire(self.ecs_world,self.delta_time, self.level_01_cfg["enemy_basic_fire"],self.bullet_cfg["enemy"])
+                system_collision_player_bullet(self.ecs_world, self._player_entity,
+                                    self.level_01_cfg,self.explosion_cfg)
+                system_collision_enemy_bullet(self.ecs_world, self.explosion_cfg, self._player_entity)
+                system_collision_player_enemy(self.ecs_world, self._player_entity,
+                                            self.level_01_cfg, self.explosion_cfg)
 
-            system_explosion_kill(self.ecs_world)
-            
-            system_player_state(self.ecs_world)
+                system_explosion_kill(self.ecs_world)
+                system_player_state(self.ecs_world)
+                
             #system_enemy_hunter_state(self.ecs_world, self._player_entity, self.enemies_cfg["TypeHunter"])
 
             system_animation(self.ecs_world, self.delta_time)
@@ -219,3 +234,20 @@ class GameEngine:
             if c_input.name == "SPACE_DOWN" and not self.is_paused:
                 print("Space")
                 self.actived_power = True
+                
+    def _create_player(self):          
+        self._player_entity = create_player_square(self.ecs_world, self.player_cfg, self.level_01_cfg)
+        self._player_c_v = self.ecs_world.component_for_entity(self._player_entity, CVelocity)
+        self._player_c_t = self.ecs_world.component_for_entity(self._player_entity, CTransform)
+        self._player_c_s = self.ecs_world.component_for_entity(self._player_entity, CSurface)
+        
+    def _is_level_ready(self,world: esper.World):
+            components = world.get_component(CReadyLevel)
+            c_rl: CReadyLevel
+
+            for _, (c_rl) in components: 
+                
+                self.is_ready = c_rl.ready
+                if self.is_ready:
+                    self._create_player()
+
