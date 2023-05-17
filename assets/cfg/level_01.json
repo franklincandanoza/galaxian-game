@@ -6,6 +6,13 @@
         },
         "max_bullets": 1
     },
+    "enemy_basic_fire":{
+        "frequency": 5,
+        "bullets" :{
+            "min": 1,
+            "max": 4
+        }
+    },
     "enemies": [
         {
             "enemy_type": "Type01",

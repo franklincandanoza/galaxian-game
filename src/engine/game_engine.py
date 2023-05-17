@@ -1,12 +1,15 @@
 import json
 import pygame
 import esper
+from src.ecs.components.c_enemy_basic_fire import CEnemyBasicFire
 from src.ecs.systems.s_animation import system_animation
 import asyncio
 import random
+from src.ecs.systems.s_collision_player_bullet import system_collision_player_bullet
 
 from src.ecs.systems.s_collision_player_enemy import system_collision_player_enemy
 from src.ecs.systems.s_collision_enemy_bullet import system_collision_enemy_bullet
+from src.ecs.systems.s_enemy_basic_fire import system_basic_enemy_fire
 
 from src.ecs.systems.s_enemy_spawner_new import system_enemy_spawner_new
 from src.ecs.systems.s_input_player import system_input_player
@@ -106,7 +109,11 @@ class GameEngine:
         self._player_c_v = self.ecs_world.component_for_entity(self._player_entity, CVelocity)
         self._player_c_t = self.ecs_world.component_for_entity(self._player_entity, CTransform)
         self._player_c_s = self.ecs_world.component_for_entity(self._player_entity, CSurface)
-        
+       
+        enemy_basic_fire = self.ecs_world.create_entity()
+
+        self.ecs_world.add_component(enemy_basic_fire,
+                         CEnemyBasicFire(self.level_01_cfg["enemy_basic_fire"]))
         #self._game_info_entity = create_game_info(self.ecs_world, self.interface_cfg)
         #self._game_info_entity = create_instructions_info(self.ecs_world, self.interface_cfg, explosion_info=self.explosion_cfg)
         #self._game_dead_enemy = update_dead_enemy_info(self.ecs_world, self.interface_cfg, dead_enemies=0)
@@ -164,7 +171,9 @@ class GameEngine:
             
             system_screen_bullet(self.ecs_world, self.screen)
             
-
+            system_basic_enemy_fire(self.ecs_world,self.delta_time, self.level_01_cfg["enemy_basic_fire"],self.bullet_cfg["enemy"])
+            system_collision_player_bullet(self.ecs_world, self._player_entity,
+                                  self.level_01_cfg,self.explosion_cfg)
             system_collision_enemy_bullet(self.ecs_world, self.explosion_cfg, self._player_entity)
             system_collision_player_enemy(self.ecs_world, self._player_entity,
                                         self.level_01_cfg, self.explosion_cfg)

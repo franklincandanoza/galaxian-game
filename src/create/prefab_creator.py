@@ -9,6 +9,7 @@ from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
+from src.ecs.components.tags.c_tag_enemy_bullet import CTagEnemyBullet
 from src.ecs.components.tags.c_tag_enemy_new import CTagEnemyNew
 from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.components.tags.c_tag_star import CTagStar
@@ -216,6 +217,29 @@ def create_bullet(world: esper.World,
     # Añadimos el componente al mundo
     world.add_component(bullet_entity, CTagBullet())
     ServiceLocator.sounds_service.play(path= bullet_info["sound"] )
+    
+    
+    
+def create_enemy_bullet(world: esper.World,
+                  enemy_pos: pygame.Vector2,
+                  enemy_size: pygame.Vector2,
+                  enemy_bullet_info: dict):
+     
+         
+    # Calculamos la posición en que debe aparecer la bala(pos es un vector)
+    pos = pygame.Vector2(enemy_pos.x + (enemy_size[0] / 2) - (enemy_bullet_info["size"]["w"] / 2),
+                         enemy_pos.y + (enemy_size[1] / 2) - (enemy_bullet_info["size"]["h"] / 2))   
+ 
+    
+    col=pygame.Color(enemy_bullet_info["color"]["r"],enemy_bullet_info["color"]["g"],enemy_bullet_info["color"]["b"])
+    
+    bullet_entity = create_square(world, size=pygame.Vector2(enemy_bullet_info["size"]["w"], enemy_bullet_info["size"]["h"]),
+                  pos=pos, vel=pygame.Vector2(0,enemy_bullet_info["velocity"]), col=col)
+
+    
+    # Añadimos el componente al mundo
+    world.add_component(bullet_entity, CTagEnemyBullet())
+       
     
 def create_enemy_explosion(world: esper.World, pos: pygame.Vector2, explosion_info: dict):
     explosion_surface = ServiceLocator.images_service.get(path = explosion_info["image_enemy"])
