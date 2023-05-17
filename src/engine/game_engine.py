@@ -3,6 +3,7 @@ import pygame
 import esper
 from src.ecs.components.c_enemy_basic_fire import CEnemyBasicFire
 from src.ecs.components.c_ready_level import CReadyLevel
+from src.ecs.components.tags.messages.c_tag_pause_message import CTagPauseMessage 
 from src.ecs.systems.s_animation import system_animation
 import asyncio
 import random
@@ -17,6 +18,7 @@ from src.ecs.systems.s_input_player import system_input_player
 from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_rendering import system_rendering
 from src.ecs.systems.s_screen_bounce import system_screen_bounce
+from src.ecs.systems.s_screen_pause import system_screen_pause
 from src.ecs.systems.s_screen_player import system_screen_player
 from src.ecs.systems.s_screen_star import system_screen_star
 from src.ecs.systems.s_screen_bullet import system_screen_bullet
@@ -83,21 +85,32 @@ class GameEngine:
             self.star_field_cfg = json.load(star_field_file)
         with open("assets/cfg/game_start.json") as game_start_file:
             self.game_start_cfg = json.load(game_start_file)
-            
-    def text_objects(self, text, font):
-        textSurface = font.render(text, True, (255,0,0))
-        return textSurface, textSurface.get_rect()
-            
-    def pause(self):
+        with open("assets/cfg/pause.json") as pause_file:
+            self.pause_cfg = json.load(pause_file)
 
+
+
+    def text_objects(self,text, font):
+        c = self.pause_cfg["color"]
+        color = (c["r"],c["g"],c["b"])
+        text_surface = font.render(text, True, color)
+        return text_surface
+                    
+    def pause(self):
         if self.is_paused:
-            largeText = pygame.font.SysFont("times",50)
-            
-            TextSurf, TextRect = self.text_objects("!Pausa¡", largeText)
-            TextRect.center = ((self.window_cfg["size"]["w"]/2),(self.window_cfg["size"]["h"]/2))
-            self.screen.blit(TextSurf, TextRect)
-            pygame.display.update()
-         
+            largeText = ServiceLocator.fonts_service.get(self.pause_cfg["font"], self.pause_cfg["size"])
+            text_surf = self.text_objects(self.pause_cfg["text"], largeText) 
+        
+            ready_message = self.ecs_world.create_entity()
+            self.ecs_world.add_component(ready_message, CSurface.from_surface(text_surf))
+            self.ecs_world.add_component(ready_message, CTagPauseMessage(self.pause_cfg))
+            self.ecs_world.add_component(ready_message,CTransform(pygame.Vector2(self.screen.get_rect().w/2-text_surf.get_width()/2, self.screen.get_rect().h/2)))
+            ServiceLocator.sounds_service.play("assets/snd/pause.ogg")
+        else:
+            component = self.ecs_world.get_component(CTagPauseMessage)
+            ServiceLocator.sounds_service.play("assets/snd/unpause.ogg")
+            for entity,(_) in component:
+                self.ecs_world.delete_entity(entity)
          
     async def run(self) -> None:
         self._create()
@@ -171,6 +184,7 @@ class GameEngine:
    
     def _update(self):
         system_screen_star(self.ecs_world, self.screen)
+        system_screen_pause(self.ecs_world, self.screen, self.delta_time)
         if not self.is_paused:
             if not self.is_ready:
                 system_ready_level(self.ecs_world,self.delta_time,self.game_start_cfg,self.screen)
@@ -204,10 +218,10 @@ class GameEngine:
             self.num_bullets = len(self.ecs_world.get_component(CTagBullet))
             
     def _draw(self):
-        if not self.is_paused:
-            self.screen.fill(self.bg_color)
-            system_rendering(self.ecs_world, self.screen)
-            pygame.display.flip()
+        #if not self.is_paused:
+        self.screen.fill(self.bg_color)
+        system_rendering(self.ecs_world, self.screen)
+        pygame.display.flip()
 
     def _clean(self):
         self.ecs_world.clear_database()

@@ -1,0 +1,13 @@
+{
+
+    "text": "PAUSED",
+    "font":"assets/fnt/arial.ttf",
+    "size":20,
+    "time_show": 0.7,
+    "time_hide": 0.3,
+    "color":{
+        "r":250,
+        "g":20,
+        "b":20
+    }
+}
