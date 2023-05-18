@@ -4,8 +4,8 @@
     "time_to_hide_ready":3,
     "sound": "assets/snd/game_start.ogg",
     "text": "READY",
-    "font":"assets/fnt/arial.ttf",
-    "size":40,
+    "font":"assets/fnt/PressStart2P.ttf",
+    "size":30,
     "color":{
         "r":250,
         "g":250,

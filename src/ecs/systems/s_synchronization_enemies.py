@@ -18,7 +18,6 @@ def system_synchronization_enemies(world: esper.World, screen: pygame.Surface):
     c_s: CSurface
     #print(f"Enemigos encontrados {len(components)}")
     for enemy_entity, (c_t, c_v, c_s, c_e) in components:
-        # Hunters don't bounce
         
         # Consultamos la posiciòn original
         original_position = c_e.original_position

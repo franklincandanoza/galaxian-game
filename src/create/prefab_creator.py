@@ -12,6 +12,7 @@ from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.components.tags.c_tag_enemy_bullet import CTagEnemyBullet
 from src.ecs.components.tags.c_tag_enemy_new import CTagEnemyNew
 from src.ecs.components.tags.c_tag_player import CTagPlayer
+from src.ecs.components.tags.c_tag_score_text import CTagScoreText
 from src.ecs.components.tags.c_tag_star import CTagStar
 from src.ecs.components.tags.c_tag_text import CTagText
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
@@ -94,7 +95,7 @@ def create_enemy_new_by_type(world: esper.World, pos_in: pygame.Vector2, enemy_i
     world.add_component(enemy_entity, CEnemyState(pos))
     world.add_component(enemy_entity,
                         CAnimation(enemy_info["animations"]))
-    world.add_component(enemy_entity, CTagEnemyNew(type, pos.copy()))
+    world.add_component(enemy_entity, CTagEnemyNew(type, pos.copy(), enemy_info["score"]))
 
 def create_enemy_hunter(world: esper.World, pos: pygame.Vector2, enemy_info: dict):
     enemy_surface = ServiceLocator.images_service.get(path = enemy_info["image"])
@@ -271,11 +272,11 @@ def create_explosion_for_elimination(world: esper.World, pos: pygame.Vector2, ex
     ServiceLocator.sounds_service.play(path= explosion_info["sound_for_elimination"] )
     return explosion_entity
 
-def create_game_info(world: esper.World, interface_info: dict) -> int:
+def create_score_info(world: esper.World, interface_info: dict) -> int:
     
     text_surface = ServiceLocator.fonts_service.get(font = interface_info["font"], size= interface_info["text_size"])
     
-    player_sprite = text_surface.render(interface_info["game_title"], True, (interface_info["text_color"]["R"],interface_info["text_color"]["G"],interface_info["text_color"]["B"]))
+    player_sprite = text_surface.render("1UP", True, (interface_info["score_title"]["R"],interface_info["score_title"]["G"],interface_info["score_title"]["B"]))
     
     pos = pygame.Vector2(20,20)
     vel = pygame.Vector2(0, 0)
@@ -283,6 +284,20 @@ def create_game_info(world: esper.World, interface_info: dict) -> int:
     world.add_component(game_info_entity, CTagPlayer())
     world.add_component(game_info_entity, CPlayerState())
     return game_info_entity
+
+def create_score_value(world: esper.World, interface_info: dict) -> int:
+    
+    text_surface = ServiceLocator.fonts_service.get(font = interface_info["font"], size= interface_info["text_size"])
+    
+    player_sprite = text_surface.render("0      ", True, (interface_info["score"]["R"],interface_info["score"]["G"],interface_info["score"]["B"]))
+    
+    pos = pygame.Vector2(20,40)
+    vel = pygame.Vector2(0, 0)
+    game_info_entity = create_sprite(world, pos, vel, player_sprite)
+    world.add_component(game_info_entity, CTagPlayer())
+    world.add_component(game_info_entity, CTagScoreText())
+    return game_info_entity
+
 
 def create_instructions_info(world: esper.World, interface_info: dict, explosion_info: dict) -> int:
     
@@ -297,12 +312,12 @@ def create_instructions_info(world: esper.World, interface_info: dict, explosion
     world.add_component(game_info_entity, CPlayerState())
     return game_info_entity
 
-def update_dead_enemy_info(world: esper.World, interface_info: dict, dead_enemies: int) -> int:
+def update_level_info(world: esper.World, interface_info: dict, dead_enemies: int) -> int:
     
     text_surface = ServiceLocator.fonts_service.get(font = interface_info["font"], size= interface_info["text_size"])
-    player_sprite = text_surface.render(f"{interface_info['dead_enemies_title']}: {dead_enemies}", True, (interface_info["text_color"]["R"],interface_info["text_color"]["G"],interface_info["text_color"]["B"]))
+    player_sprite = text_surface.render(f"0    ", True, (interface_info["text_color"]["R"],interface_info["text_color"]["G"],interface_info["text_color"]["B"]))
     
-    pos = pygame.Vector2(20,40)
+    pos = pygame.Vector2(435,13)
     vel = pygame.Vector2(0, 0)
     game_info_entity = create_sprite(world, pos, vel, player_sprite)
     world.add_component(game_info_entity, CTagPlayer())
@@ -313,7 +328,7 @@ def update_dead_enemy_info(world: esper.World, interface_info: dict, dead_enemie
 def create_player_square(world: esper.World, player_info: dict, player_lvl_info: dict) -> int:
     player_sprite = ServiceLocator.images_service.get(path = player_info["image"])
     
-    new_size = (40, 40)
+    new_size = (50, 50)
     
     scaled_surface = pygame.transform.scale(player_sprite, new_size)
     
@@ -324,9 +339,19 @@ def create_player_square(world: esper.World, player_info: dict, player_lvl_info:
                          player_lvl_info["player_spawn"]["position"]["y"] - (size[1] / 2))
     vel = pygame.Vector2(0, 0)
     player_entity = create_sprite(world, pos, vel, player_sprite)
-    world.add_component(player_entity, CTagPlayer())
+    world.add_component(player_entity, CTagPlayer(lifes = player_info["lifes"]))
     world.add_component(player_entity,
                         CAnimation(player_info["animations"]))
+    world.add_component(player_entity, CPlayerState())
+    return player_entity
+
+def create_level_square(world: esper.World, interface_info: dict) -> int:
+    player_sprite = ServiceLocator.images_service.get(path = interface_info["level_image"])
+    
+    pos = pygame.Vector2(420,10)
+    vel = pygame.Vector2(0, 0)
+    player_entity = create_sprite(world, pos, vel, player_sprite)
+    world.add_component(player_entity, CTagPlayer())
     world.add_component(player_entity, CPlayerState())
     return player_entity
 

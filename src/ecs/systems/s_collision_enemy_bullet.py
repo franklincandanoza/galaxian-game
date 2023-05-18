@@ -39,5 +39,5 @@ def system_collision_enemy_bullet(world: esper.World, explosion_info: dict, play
                 world.delete_entity(enemy_entity)
                 world.delete_entity(bullet_entity)
                 pl_t.dead_enemies = pl_t.dead_enemies + 1
+                pl_t.score += c_ene.enemy_score
                 create_enemy_explosion(world, c_t.pos, explosion_info)
-

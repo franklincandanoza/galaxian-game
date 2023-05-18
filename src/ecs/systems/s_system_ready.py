@@ -36,7 +36,8 @@ def system_ready_level(world: esper.World,delta_time:float,start_game_info:dict,
 
             if len(component):
                 return
-                        
+            
+                    
             largeText = ServiceLocator.fonts_service.get(start_game_info["font"],start_game_info["size"])
 
             text_surf = text_objects(start_game_info["text"], largeText,start_game_info) 

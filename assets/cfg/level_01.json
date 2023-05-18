@@ -1,11 +1,10 @@
 {
-
     "player_spawn": {
         "position": {
             "x": 260,
             "y": 560
         },
-        "max_bullets": 1
+        "max_bullets": 50
     },
     "enemy_basic_fire":{
         "frequency": 5,
@@ -16,21 +15,26 @@
     },
     "enemies": [
         {
-            "enemy_type": "Type01",
-            "quantity": 2
+            "enemy_type": "Type04",
+            "quantity": 2,
+            "lines": 1
         },
         {
-            "enemy_type": "Type02",
-            "quantity": 6
+            "enemy_type": "Type01",
+            "quantity": 6,
+            "lines": 1
         },
+        
         {
             "enemy_type": "Type03",
-            "quantity": 10
+            "quantity": 8,
+            "lines": 1
         },
-        {
-            "enemy_type": "Type04",
-            "quantity": 14
         
+        {
+            "enemy_type": "Type02",
+            "quantity": 10,
+            "lines": 3
         }
     ]
 }

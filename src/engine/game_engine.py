@@ -11,6 +11,7 @@ from src.ecs.systems.s_collision_player_bullet import system_collision_player_bu
 
 from src.ecs.systems.s_collision_player_enemy import system_collision_player_enemy
 from src.ecs.systems.s_collision_enemy_bullet import system_collision_enemy_bullet
+from src.ecs.systems.s_screen_info import system_screen_info
 from src.ecs.systems.s_enemy_basic_fire import system_basic_enemy_fire
 
 from src.ecs.systems.s_enemy_spawner_new import system_enemy_spawner_new
@@ -25,6 +26,7 @@ from src.ecs.systems.s_screen_bullet import system_screen_bullet
 
 from src.ecs.systems.s_player_state import system_player_state
 from src.ecs.systems.s_explosion_kill import system_explosion_kill
+from src.ecs.systems.s_up_level_game import system_up_level_game
 from src.ecs.systems.s_enemy_hunter_state import system_enemy_hunter_state
 from src.ecs.systems.s_synchronization_enemies import system_synchronization_enemies
 
@@ -35,8 +37,8 @@ from src.ecs.components.tags.c_tag_bullet import CTagBullet
 
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 
-from src.create.prefab_creator import create_input_player, create_player_square, create_bullet
-from src.create.prefab_creator  import create_game_info, update_dead_enemy_info, create_instructions_info, create_start, create_enemy_spawner_new
+from src.create.prefab_creator import create_input_player, create_player_square, create_bullet, create_level_square
+from src.create.prefab_creator  import create_score_info, update_level_info, create_instructions_info, create_start, create_enemy_spawner_new, create_score_value
 from src.ecs.systems.s_system_ready import system_ready_level
 from src.engine.service_locator import ServiceLocator
 
@@ -130,13 +132,15 @@ class GameEngine:
 
         self.ecs_world.add_component(enemy_basic_fire,
                          CEnemyBasicFire(self.level_01_cfg["enemy_basic_fire"]))
-        #self._game_info_entity = create_game_info(self.ecs_world, self.interface_cfg)
+        self._game_info_entity = create_score_info(self.ecs_world, self.interface_cfg)
+        self._game_info_entity = create_score_value(self.ecs_world, self.interface_cfg)
         #self._game_info_entity = create_instructions_info(self.ecs_world, self.interface_cfg, explosion_info=self.explosion_cfg)
-        #self._game_dead_enemy = update_dead_enemy_info(self.ecs_world, self.interface_cfg, dead_enemies=0)
+        self._game_dead_enemy = update_level_info(self.ecs_world, self.interface_cfg, dead_enemies=0)
         
         
         create_enemy_spawner_new(self.ecs_world, self.level_01_cfg)
         create_input_player(self.ecs_world)
+        create_level_square(self.ecs_world, self.interface_cfg)
         
         
         ready_level = self.ecs_world.create_entity()
@@ -186,9 +190,10 @@ class GameEngine:
         system_screen_star(self.ecs_world, self.screen)
         system_screen_pause(self.ecs_world, self.screen, self.delta_time)
         if not self.is_paused:
-            if not self.is_ready:
-                system_ready_level(self.ecs_world,self.delta_time,self.game_start_cfg,self.screen)
-                self._is_level_ready(self.ecs_world)
+            #if not self.is_ready:
+            system_ready_level(self.ecs_world,self.delta_time,self.game_start_cfg,self.screen)
+            self._is_level_ready(self.ecs_world)
+                
             
             system_enemy_spawner_new(self.ecs_world, self.enemies_cfg, self.screen)
             system_movement(self.ecs_world, self.delta_time)
@@ -206,9 +211,13 @@ class GameEngine:
                 system_collision_enemy_bullet(self.ecs_world, self.explosion_cfg, self._player_entity)
                 system_collision_player_enemy(self.ecs_world, self._player_entity,
                                             self.level_01_cfg, self.explosion_cfg)
+                system_screen_info(self.ecs_world, self._player_entity, self.explosion_cfg, self.interface_cfg)
 
                 system_explosion_kill(self.ecs_world)
                 system_player_state(self.ecs_world)
+                system_up_level_game(self.ecs_world, self.explosion_cfg, self._player_entity, self.game_start_cfg, self.level_01_cfg)
+                
+                
                 
             #system_enemy_hunter_state(self.ecs_world, self._player_entity, self.enemies_cfg["TypeHunter"])
 
@@ -229,25 +238,26 @@ class GameEngine:
 
     def _do_action(self, c_input: CInputCommand):
         
-            if c_input.name == "PLAYER_LEFT":
-                if c_input.phase == CommandPhase.START:
-                    self._player_c_v.vel.x -= self.player_cfg["input_velocity"]
-                elif c_input.phase == CommandPhase.END:
-                    self._player_c_v.vel.x += self.player_cfg["input_velocity"]
-            if c_input.name == "PLAYER_RIGHT":
-                if c_input.phase == CommandPhase.START:
-                    self._player_c_v.vel.x += self.player_cfg["input_velocity"]
-                elif c_input.phase == CommandPhase.END:
-                    self._player_c_v.vel.x -= self.player_cfg["input_velocity"]
-            
-            if c_input.name == "PLAYER_Z" and self.num_bullets < self.level_01_cfg["player_spawn"]["max_bullets"]:
-                if not self.is_paused:
-                    create_bullet(self.ecs_world, self._player_c_t.pos,
-                            self._player_c_s.area.size, self.bullet_cfg)
-            
-            if c_input.name == "SPACE_DOWN" and not self.is_paused:
-                print("Space")
-                self.actived_power = True
+            if self.is_ready:
+                if c_input.name == "PLAYER_LEFT":
+                    if c_input.phase == CommandPhase.START:
+                        self._player_c_v.vel.x -= self.player_cfg["input_velocity"]
+                    elif c_input.phase == CommandPhase.END:
+                        self._player_c_v.vel.x += self.player_cfg["input_velocity"]
+                if c_input.name == "PLAYER_RIGHT":
+                    if c_input.phase == CommandPhase.START:
+                        self._player_c_v.vel.x += self.player_cfg["input_velocity"]
+                    elif c_input.phase == CommandPhase.END:
+                        self._player_c_v.vel.x -= self.player_cfg["input_velocity"]
+                
+                if c_input.name == "PLAYER_Z" and self.num_bullets < self.level_01_cfg["player_spawn"]["max_bullets"]:
+                    if not self.is_paused:
+                        create_bullet(self.ecs_world, self._player_c_t.pos,
+                                self._player_c_s.area.size, self.bullet_cfg)
+                
+                if c_input.name == "SPACE_DOWN" and not self.is_paused:
+                    print("Space")
+                    self.actived_power = True
                 
     def _create_player(self):          
         self._player_entity = create_player_square(self.ecs_world, self.player_cfg, self.level_01_cfg)
@@ -262,6 +272,7 @@ class GameEngine:
             for _, (c_rl) in components: 
                 
                 self.is_ready = c_rl.ready
-                if self.is_ready:
+                if self.is_ready and not c_rl.player_showed:
                     self._create_player()
+                    c_rl.player_showed = True
 

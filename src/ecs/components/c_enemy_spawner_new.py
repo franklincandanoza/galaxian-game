@@ -11,4 +11,5 @@ class SpawnEventDataNew:
     def __init__(self, event_data:dict) -> None:
         self.type:str = event_data["enemy_type"]
         self.quantity:str =  event_data["quantity"]
+        self.lines: int = event_data["lines"]
         self.triggered = False
