@@ -12,6 +12,7 @@ class CTagPlayer:
     def discount_life(self)->None:
         self.current_lifes -=1
         if self.current_lifes == 0:
+            print(f"current_lifes = {self.current_lifes}")
             self.level = 1
             self.score = 0
-            self.current_lifes = self.original_lifes
+            #self.current_lifes = self.original_lifes

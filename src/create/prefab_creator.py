@@ -255,6 +255,7 @@ def create_player_explosion(world: esper.World, pos: pygame.Vector2, explosion_i
     vel = pygame.Vector2(0, 0)
 
     explosion_entity = create_sprite(world, pos, vel, explosion_surface)
+    
     world.add_component(explosion_entity, CTagExplosion())
     world.add_component(explosion_entity,
                         CAnimation(explosion_info["animations"]))
@@ -281,7 +282,7 @@ def create_score_info(world: esper.World, interface_info: dict) -> int:
     pos = pygame.Vector2(20,20)
     vel = pygame.Vector2(0, 0)
     game_info_entity = create_sprite(world, pos, vel, player_sprite)
-    world.add_component(game_info_entity, CTagPlayer())
+
     world.add_component(game_info_entity, CPlayerState())
     return game_info_entity
 
@@ -294,7 +295,7 @@ def create_score_value(world: esper.World, interface_info: dict) -> int:
     pos = pygame.Vector2(20,40)
     vel = pygame.Vector2(0, 0)
     game_info_entity = create_sprite(world, pos, vel, player_sprite)
-    world.add_component(game_info_entity, CTagPlayer())
+
     world.add_component(game_info_entity, CTagScoreText())
     return game_info_entity
 
@@ -308,7 +309,6 @@ def create_instructions_info(world: esper.World, interface_info: dict, explosion
     pos = pygame.Vector2(200,20)
     vel = pygame.Vector2(0, 0)
     game_info_entity = create_sprite(world, pos, vel, player_sprite)
-    world.add_component(game_info_entity, CTagPlayer())
     world.add_component(game_info_entity, CPlayerState())
     return game_info_entity
 
@@ -320,12 +320,13 @@ def update_level_info(world: esper.World, interface_info: dict, dead_enemies: in
     pos = pygame.Vector2(435,13)
     vel = pygame.Vector2(0, 0)
     game_info_entity = create_sprite(world, pos, vel, player_sprite)
-    world.add_component(game_info_entity, CTagPlayer())
+
     world.add_component(game_info_entity, CTagText())
     return game_info_entity
 
 
 def create_player_square(world: esper.World, player_info: dict, player_lvl_info: dict) -> int:
+    print(f"creando jugador con vidas {player_info['lifes']}")
     player_sprite = ServiceLocator.images_service.get(path = player_info["image"])
     
     new_size = (50, 50)
@@ -351,7 +352,6 @@ def create_level_square(world: esper.World, interface_info: dict) -> int:
     pos = pygame.Vector2(420,10)
     vel = pygame.Vector2(0, 0)
     player_entity = create_sprite(world, pos, vel, player_sprite)
-    world.add_component(player_entity, CTagPlayer())
     world.add_component(player_entity, CPlayerState())
     return player_entity
 

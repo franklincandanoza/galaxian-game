@@ -2,7 +2,7 @@
 """Función Main"""
 
 import asyncio
-from src.engine.game_engine import GameEngine
+from src.engine.game_engine_final import GameEngine
 
 if __name__ == "__main__":
     engine = GameEngine()
