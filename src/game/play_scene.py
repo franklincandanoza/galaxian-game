@@ -107,7 +107,9 @@ class PlayScene(Scene):
         
         self._create_stars()
         ServiceLocator.sounds_service.play(self.game_start_cfg["sound"])
-
+        self._player_left_start = False
+        self._player_right_start = False
+        
     def _create_stars(self)->None:
         y_window_zize = self.window_cfg["size"]["h"] # Verticañ
         w_window_zize =  self.window_cfg["size"]["w"] # Horizontal
@@ -186,14 +188,20 @@ class PlayScene(Scene):
         if self.is_ready:
             if c_input.name == "PLAYER_LEFT":
                 if c_input.phase == CommandPhase.START:
+                    self._player_left_start = True
                     self._player_c_v.vel.x -= self.player_cfg["input_velocity"]
-                elif c_input.phase == CommandPhase.END:
+                elif c_input.phase == CommandPhase.END  and self._player_left_start:
                     self._player_c_v.vel.x += self.player_cfg["input_velocity"]
             if c_input.name == "PLAYER_RIGHT":
                 if c_input.phase == CommandPhase.START:
+                    self._player_right_start = True
                     self._player_c_v.vel.x += self.player_cfg["input_velocity"]
-                elif c_input.phase == CommandPhase.END:
+
+                elif c_input.phase == CommandPhase.END and self._player_right_start:
                     self._player_c_v.vel.x -= self.player_cfg["input_velocity"]
+
+             
+                
             
             if c_input.name == "PLAYER_Z" and self.num_bullets < self.level_01_cfg["player_spawn"]["max_bullets"]:
                 if not self.is_paused:
