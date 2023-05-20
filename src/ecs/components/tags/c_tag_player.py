@@ -5,14 +5,3 @@ class CTagPlayer:
         self.original_lifes = lifes
         self.current_lifes = lifes
         self.score = 0
-        
-    def restart_score(self)->None:
-        self.score = 0
-        
-    def discount_life(self)->None:
-        self.current_lifes -=1
-        if self.current_lifes == 0:
-            print(f"current_lifes = {self.current_lifes}")
-            self.level = 1
-            self.score = 0
-            #self.current_lifes = self.original_lifes

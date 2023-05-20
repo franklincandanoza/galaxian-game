@@ -38,7 +38,14 @@ def system_collision_player_bullet(world: esper.World, player_entity: int,
             pl_tp.dead_enemies = 0
             pl_t.pos.x = level_cfg["player_spawn"]["position"]["x"] - pl_s.area.w / 2
             pl_t.pos.y = level_cfg["player_spawn"]["position"]["y"] - pl_s.area.h / 2
-            pl_tp.discount_life()
+            
+            pl_tp.current_lifes -=1
+            if pl_tp.current_lifes == 0:
+                print(f"current_lifes = {pl_tp.current_lifes}")
+                pl_tp.level = 1
+                pl_tp.score = 0
+                #self.current_lifes = self.original_lifes
+            
             create_player_explosion(world, pl_t.pos, explosion_info)
             
            
