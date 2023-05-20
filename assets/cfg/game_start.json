@@ -5,6 +5,7 @@
     "sound": "assets/snd/game_start.ogg",
     "text": "READY",
     "font":"assets/fnt/PressStart2P.ttf",
+    "up_level_sound" : "assets/snd/level_up.ogg",
     "size":30,
     "color":{
         "r":250,

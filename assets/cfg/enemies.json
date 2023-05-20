@@ -35,7 +35,7 @@
                 {
                     "name": "MOVE",
                     "start": 0,
-                    "end": 5,
+                    "end": 4,
                     "framerate": 10
                 },
                 {
@@ -59,7 +59,7 @@
                 {
                     "name": "MOVE",
                     "start": 0,
-                    "end": 5,
+                    "end": 4,
                     "framerate": 10
                 },
                 {

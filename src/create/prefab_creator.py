@@ -133,12 +133,6 @@ def create_input_player(world: esper.World):
                         CInputCommand("PLAYER_LEFT", pygame.K_LEFT))
     world.add_component(input_right,
                         CInputCommand("PLAYER_RIGHT", pygame.K_RIGHT))
-    world.add_component(input_up,
-                        CInputCommand("PLAYER_UP", pygame.K_UP))
-    world.add_component(input_down,
-                        CInputCommand("PLAYER_DOWN", pygame.K_DOWN))
-    world.add_component(space_down,
-                        CInputCommand("SPACE_DOWN", pygame.K_SPACE))
     world.add_component(input_z,
                         CInputCommand("PLAYER_Z", pygame.K_z))
 
@@ -149,8 +143,6 @@ def create_input_player(world: esper.World):
 def create_start(world: esper.World,
                  star_pos: pygame.Vector2,
                  star_info: dict)->None:
-    
-    print(len(star_info["star_colors"]))
     
     color = star_info["star_colors"][(random.randint(0, len(star_info["star_colors"])-1))]
     

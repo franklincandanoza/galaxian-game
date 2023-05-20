@@ -5,10 +5,8 @@ from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_ready_level import CReadyLevel
 from src.ecs.components.tags.c_tag_player import CTagPlayer
-from src.ecs.components.c_enemy_hunter_state import CEnemyHunterState
-from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.components.tags.c_tag_enemy_new import CTagEnemyNew
-from src.ecs.components.tags.c_tag_bullet import CTagBullet
+from src.engine.service_locator import ServiceLocator
 from src.create.prefab_creator import create_enemy_explosion, create_enemy_spawner_new
 
 
@@ -43,6 +41,7 @@ def system_up_level_game(world: esper.World, explosion_info: dict, player_entity
         create_enemy_spawner_new(world, level_data)
         pl_tp.level += 1
         print(f"Aumentando el jugador a nivel: {pl_tp.level}")
+        ServiceLocator.sounds_service.play(path=game_start_cfg["up_level_sound"])
     else:
         pass
         ##print(f"{enemigos_ene_el_mundo} enemigos en el mundo")

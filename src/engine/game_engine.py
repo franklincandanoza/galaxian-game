@@ -255,10 +255,6 @@ class GameEngine:
                         create_bullet(self.ecs_world, self._player_c_t.pos,
                                 self._player_c_s.area.size, self.bullet_cfg)
                 
-                if c_input.name == "SPACE_DOWN" and not self.is_paused:
-                    print("Space")
-                    self.actived_power = True
-                
     def _create_player(self):          
         self._player_entity = create_player_square(self.ecs_world, self.player_cfg, self.level_01_cfg)
         self._player_c_v = self.ecs_world.component_for_entity(self._player_entity, CVelocity)

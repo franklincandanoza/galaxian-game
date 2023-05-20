@@ -111,7 +111,7 @@ class PlayScene(Scene):
         self._player_right_start = False
         
     def _create_stars(self)->None:
-        y_window_zize = self.window_cfg["size"]["h"] # Verticañ
+        y_window_zize = self.window_cfg["size"]["h"] # Vertical
         w_window_zize =  self.window_cfg["size"]["w"] # Horizontal
         stars_number = self.star_field_cfg["number_of_stars"]
         # Recorremos la cantidad de estrellas a crear
