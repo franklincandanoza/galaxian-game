@@ -3,13 +3,11 @@ import pygame
 from src.ecs.components.tags.c_tag_player import CTagPlayer
 
 from src.engine.scenes.scene import Scene
-from src.create.prefab_creator_interface import TextAlignment, create_text
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform 
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.systems.s_movement import system_movement
-import src.engine.game_engine
 import json
 import pygame
 import esper
@@ -38,7 +36,6 @@ from src.ecs.systems.s_screen_bullet import system_screen_bullet
 from src.ecs.systems.s_player_state import system_player_state
 from src.ecs.systems.s_explosion_kill import system_explosion_kill
 from src.ecs.systems.s_up_level_game import system_up_level_game
-from src.ecs.systems.s_enemy_hunter_state import system_enemy_hunter_state
 from src.ecs.systems.s_synchronization_enemies import system_synchronization_enemies
 
 from src.ecs.components.c_velocity import CVelocity
@@ -49,7 +46,7 @@ from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 
 from src.create.prefab_creator import create_input_player, create_player_square, create_bullet, create_level_square
-from src.create.prefab_creator  import create_score_info, update_level_info, create_instructions_info, create_start, create_enemy_spawner_new, create_score_value
+from src.create.prefab_creator  import create_score_info, update_level_info, create_start, create_enemy_spawner_new, create_score_value, create_lifes_info
 from src.ecs.systems.s_system_ready import system_ready_level
 from src.engine.service_locator import ServiceLocator
 
@@ -91,6 +88,7 @@ class PlayScene(Scene):
                          CEnemyBasicFire(self.level_01_cfg["enemy_basic_fire"]))
         self._game_info_entity = create_score_info(self.ecs_world, self.interface_cfg)
         self._game_info_entity = create_score_value(self.ecs_world, self.interface_cfg)
+        create_lifes_info(self.ecs_world, self.interface_cfg, self.player_cfg)
         #self._game_info_entity = create_instructions_info(self.ecs_world, self.interface_cfg, explosion_info=self.explosion_cfg)
         self._game_dead_enemy = update_level_info(self.ecs_world, self.interface_cfg, dead_enemies=0)
         

@@ -7,8 +7,8 @@ from src.ecs.components.c_transform import CTransform
 from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.components.c_enemy_hunter_state import CEnemyHunterState
 from src.ecs.components.tags.c_tag_text import CTagText
+from src.ecs.components.tags.c_tag_lifes import CTagLifes
 from src.ecs.components.tags.c_tag_score_text import CTagScoreText
-from src.create.prefab_creator import create_explosion_for_elimination, update_level_info
 from src.engine.service_locator import ServiceLocator
 
 
@@ -22,6 +22,13 @@ def system_screen_info(world: esper.World, player_entity: int, explosion_info: d
     
     for _, (c_s_t, ct_t) in components_text:
         c_s_t.surf = text_surface.render(f"{pl_t.level}", True, (interface_info["text_color"]["R"],interface_info["text_color"]["G"],interface_info["text_color"]["B"]))
+        
+    
+    ## LIFES
+    components = world.get_components(CSurface, CTagLifes)
+    for life_entity, (_, c_t) in components:
+        if c_t.life_number > pl_t.current_lifes:
+            world.delete_entity(life_entity)
     
     ## SCORE
     components_score = world.get_components(CSurface, CTagScoreText)

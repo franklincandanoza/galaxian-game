@@ -13,6 +13,7 @@ from src.ecs.components.tags.c_tag_enemy_bullet import CTagEnemyBullet
 from src.ecs.components.tags.c_tag_enemy_new import CTagEnemyNew
 from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.components.tags.c_tag_score_text import CTagScoreText
+from src.ecs.components.tags.c_tag_lifes import CTagLifes
 from src.ecs.components.tags.c_tag_star import CTagStar
 from src.ecs.components.tags.c_tag_text import CTagText
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
@@ -269,7 +270,7 @@ def create_score_info(world: esper.World, interface_info: dict) -> int:
     
     text_surface = ServiceLocator.fonts_service.get(font = interface_info["font"], size= interface_info["text_size"])
     
-    player_sprite = text_surface.render("1UP", True, (interface_info["score_title"]["R"],interface_info["score_title"]["G"],interface_info["score_title"]["B"]))
+    player_sprite = text_surface.render(interface_info["score_level"], True, (interface_info["score_title"]["R"],interface_info["score_title"]["G"],interface_info["score_title"]["B"]))
     
     pos = pygame.Vector2(20,20)
     vel = pygame.Vector2(0, 0)
@@ -290,6 +291,22 @@ def create_score_value(world: esper.World, interface_info: dict) -> int:
 
     world.add_component(game_info_entity, CTagScoreText())
     return game_info_entity
+
+def create_lifes_info(world: esper.World, interface_info: dict, player_info : dict) -> None:
+    
+    player_sprite = ServiceLocator.images_service.get(path = interface_info["life_image"])
+    distance_x = 10
+    start_x = 300
+
+    lifes = player_info["lifes"]
+    for i in range(1, lifes+1):
+        
+        pos = pygame.Vector2(start_x,10)
+        vel = pygame.Vector2(0, 0)
+        game_info_entity = create_sprite(world, pos, vel, player_sprite)
+        print(f"Creando vida {i}")
+        world.add_component(game_info_entity, CTagLifes(life_number=i))
+        start_x +=distance_x
 
 
 def create_instructions_info(world: esper.World, interface_info: dict, explosion_info: dict) -> int:
