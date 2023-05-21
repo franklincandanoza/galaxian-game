@@ -14,10 +14,11 @@
         }
     },
     "enemy_steering":{
+        "enemy_launch": "assets/snd/enemy_launch.ogg",
         "returning_vel":50,
         "gravity":100,
         "time_to_recalcule":0.7,
-        "time_steering":3,
+        "time_steering":1,
         "enemies_to_steering" :{
             "min": 1,
             "max": 3
