@@ -1,6 +1,7 @@
 from enum import Enum
 import pygame
 import esper
+from src.create.prefab_creator import create_sprite
 
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
@@ -29,3 +30,12 @@ def create_text(world:esper.World, txt:str, size:int,
     world.add_component(text_entity,
                         CTransform(pos + origin))
     return text_entity
+
+
+
+def create_image(world: esper.World,path:str, pos:pygame.Vector2) -> int:
+    sprite = ServiceLocator.images_service.get(path)
+  
+    create_sprite(world, pos, pygame.Vector2(0,0), sprite)
+ 
+ 

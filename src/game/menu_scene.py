@@ -1,12 +1,13 @@
 import pygame
 
 from src.engine.scenes.scene import Scene
-from src.create.prefab_creator_interface import TextAlignment, create_text
+from src.create.prefab_creator_interface import TextAlignment, create_text,create_image
 from src.ecs.components.c_input_command import CInputCommand 
 
 class MenuScene(Scene):
     
     def do_create(self):
+        create_image(self.ecs_world,"assets/img/invaders_logo_title.png",pygame.Vector2(186, 80))
         create_text(self.ecs_world, "MAIN MENU", 16, 
                     pygame.Color(50, 255, 50), pygame.Vector2(260, 150), TextAlignment.CENTER)
         create_text(self.ecs_world, "PRESS Z TO START GAME", 11, 
