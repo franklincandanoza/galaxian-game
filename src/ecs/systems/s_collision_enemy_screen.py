@@ -2,7 +2,8 @@
 
 import esper
 from src.ecs.components.c_enemy_steering_fire import CEnemySteeringFire
-from src.ecs.components.c_steering import CSteering, State
+from src.ecs.components.c_steering import CSteering
+from src.ecs.components.c_steering_state import CSteeringState, State
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
@@ -27,17 +28,16 @@ def system_collision_enemy_screen(world: esper.World,
     Returns:
     - None
     """
-    components_enemy = world.get_components(CSurface, CTransform, CSteering,CVelocity)
+    components_enemy = world.get_components(CSurface, CTransform, CSteering,CVelocity,CSteeringState)
     
-    for enemy_entity, (c_s, c_t, c_st,c_v) in components_enemy:
+    for enemy_entity, (c_s, c_t, c_st,c_v,c_ss) in components_enemy:
         
         ene_rect = c_s.area.copy()
         ene_rect.topleft = c_t.pos
         if not ene_rect.colliderect(screen.get_rect()):
-            print("no contiene")
-            c_st.state=State.RETURNING
+            c_ss.state=State.RETURNING
             c_t.pos=pygame.Vector2(c_t.pos.x,0)
-            c_v.vel=pygame.Vector2(0,0)
+            c_v.vel=pygame.Vector2(32,0)
             world.remove_component(enemy_entity,CEnemySteeringFire)
             world.remove_component(enemy_entity,CSteering)
             

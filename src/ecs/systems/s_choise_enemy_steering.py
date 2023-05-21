@@ -17,7 +17,6 @@ def system_choose_enemy_steering(world:esper.World,enemy_steering_info:dict, del
  
     for _, (c_cs) in component: 
         c_cs.current_time += delta_time
-        print("escogiendo")
         if c_cs.current_time>=c_cs.time_steering:
             c_cs.current_time = 0
             number_of_enemies = random.randint(c_cs.enemies_to_steering_min,c_cs.enemies_to_steering_max)
@@ -32,7 +31,7 @@ def system_choose_enemy_steering(world:esper.World,enemy_steering_info:dict, del
             for entity in components_enemy:
                 c_t=world.component_for_entity(entity,CTransform)
                 world.remove_component(entity,CTagGroupEnemy)
-                world.add_component(entity,CSteering())
-                world.add_component(entity,CSteeringState(c_t.pos))
+                world.add_component(entity,CSteering(enemy_steering_info))
+                world.add_component(entity,CSteeringState(c_t.pos.copy()))
                 world.add_component(entity,CEnemySteeringFire(enemy_steering_info["fire"]))
  

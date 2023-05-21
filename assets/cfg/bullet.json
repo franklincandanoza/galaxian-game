@@ -3,10 +3,10 @@
     "sound": "assets/snd/player_shoot.ogg",
     "velocity": 500,
     "enemy":{
-        "velocity": 150,
+        "velocity": 200,
         "size":{
             "w":2,
-            "h":6
+            "h":4
         },
         "color":{
             "r":250,

@@ -11,14 +11,14 @@ from src.ecs.components.tags.c_tag_grouped_enemy import CTagGroupEnemy
 
 def system_synchronization_enemies(world: esper.World, screen: pygame.Surface):
     screen_rect = screen.get_rect()
-    components = world.get_components(CTransform, CVelocity, CSurface, CTagEnemyNew,CTagGroupEnemy)
+    components = world.get_components(CTransform, CVelocity, CTagEnemyNew,CTagGroupEnemy)
 
-    delta = 20
+    delta = 16
     c_t: CTransform
     c_v: CVelocity
-    c_s: CSurface
     #print(f"Enemigos encontrados {len(components)}")
-    for enemy_entity, (c_t, c_v, c_s, c_e,_) in components:
+    turn= False
+    for _, (c_t, c_v, c_e,_) in components:
         
         # Consultamos la posiciòn original
         original_position = c_e.original_position
@@ -28,8 +28,13 @@ def system_synchronization_enemies(world: esper.World, screen: pygame.Surface):
         
         # Validamos que no haya llegado al límite por la derecha
         if original_position.x + delta < current_position.x:
-            c_v.vel.x *= -1
+            turn = True
         
         # Validamos que no haya llegado al límite por la izquierda
-        if original_position.x - delta > current_position.x:
-            c_v.vel.x *= -1
+        elif original_position.x - delta > current_position.x:
+            turn = True
+        #print(f"vel {c_v.vel}")    
+    for _, (c_t, c_v, c_e,_) in components:
+            if turn:
+                c_v.vel.x *= -1
+                

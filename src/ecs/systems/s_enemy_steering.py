@@ -15,17 +15,21 @@ def system_enemy_steering(world:esper.World, ball_cfg:dict, delta_time:float):
         
        
         if c_bs.current_time==0:
-            player_dist = _get_player_distance_pos(world,)
+            player_dist = _get_player_distance_pos(world)
             
             # Follow Vector
             c_bs.follow_vector = player_dist - c_t.pos
             
-            c_bs.follow_vector = pygame.Vector2( c_bs.follow_vector.x*c_bs.follow_vector.magnitude(),0)
-            desired_good_length = 70 #ball_cfg["follow_force"]
-            c_bs.follow_vector.scale_to_length(desired_good_length)
-            final_vector = c_bs.follow_vector + c_bs.gravity_vector
-            c_v.vel = c_v.vel.lerp(final_vector,1)           
-            print(c_v.vel)
+            follow_vector = pygame.Vector2( c_bs.follow_vector.x*c_bs.follow_vector.magnitude(),0)
+
+            desired_good_length = 64 #ball_cfg["follow_force"]
+            try: 
+                c_bs.follow_vector.scale_to_length(desired_good_length)
+                follow_vector.scale_to_length(desired_good_length)
+                final_vector =follow_vector + c_bs.gravity_vector
+                c_v.vel = c_v.vel.lerp(final_vector,1)  
+            except:
+                print("Error")             
         elif c_bs.time_to_recalcule <= c_bs.current_time:
             c_bs.current_time = 0
             break

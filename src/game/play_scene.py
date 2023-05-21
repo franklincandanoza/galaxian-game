@@ -5,6 +5,7 @@ from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.systems.debug.s_steering_draw_debug import system_steering_draw_debug
 from src.ecs.systems.s_choise_enemy_steering import system_choose_enemy_steering
 from src.ecs.systems.s_collision_enemy_screen import system_collision_enemy_screen
+from src.ecs.systems.s_enemy_returning import system_enemy_returning
 from src.ecs.systems.s_enemy_steering import system_enemy_steering
 from src.ecs.systems.s_enemy_steering_fire import system_enemy_steering_fire
 
@@ -157,6 +158,7 @@ class PlayScene(Scene):
             
             system_enemy_spawner_new(self.ecs_world, self.enemies_cfg, self.screen)
             system_movement(self.ecs_world, delta_time)
+            system_enemy_returning(self.ecs_world, self.level_01_cfg["enemy_steering"])
             system_synchronization_enemies(self.ecs_world, self.screen)
 
             system_screen_bounce(self.ecs_world, self.screen)
@@ -168,6 +170,7 @@ class PlayScene(Scene):
             if self.is_ready:
                 system_choose_enemy_steering(self.ecs_world,self.level_01_cfg["enemy_steering"], delta_time)
                 system_enemy_steering(self.ecs_world, None, delta_time)
+                
                 system_collision_enemy_screen(self.ecs_world, self.screen)
                 system_basic_enemy_fire(self.ecs_world,delta_time, self.level_01_cfg["enemy_basic_fire"],self.bullet_cfg["enemy"])
                 system_enemy_steering_fire(self.ecs_world, delta_time,self.bullet_cfg["enemy"])

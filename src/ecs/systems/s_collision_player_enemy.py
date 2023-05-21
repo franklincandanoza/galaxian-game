@@ -44,5 +44,4 @@ def system_collision_player_enemy(world: esper.World, player_entity: int,
             if pl_tp.current_lifes == 0:
                 print(f"current_lifes = {pl_tp.current_lifes}")
                 pl_tp.level = 1
-                pl_tp.score = 0
-                #self.current_lifes = self.original_lifes
+                pl_tp.score = 0 

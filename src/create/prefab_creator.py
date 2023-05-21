@@ -95,7 +95,7 @@ def create_enemy_new_by_type(world: esper.World, pos_in: pygame.Vector2, enemy_i
                          pos_in.y - (size[1] / 2))
     
     
-    velocity = pygame.Vector2(30, 0)
+    velocity = pygame.Vector2(32, 0) 
     enemy_entity = create_sprite(world, pos, velocity, enemy_surface)
     world.add_component(enemy_entity, CEnemyState(pos))
     world.add_component(enemy_entity,
@@ -133,9 +133,7 @@ def create_enemy_spawner_new(world: esper.World, level_data: dict):
 def create_input_player(world: esper.World):
     input_left = world.create_entity()
     input_right = world.create_entity()
-    input_up = world.create_entity()
-    input_down = world.create_entity()
-    space_down = world.create_entity()
+
     input_z = world.create_entity()
     steering = world.create_entity()
     

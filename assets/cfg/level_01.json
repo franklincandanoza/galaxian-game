@@ -4,7 +4,7 @@
             "x": 260,
             "y": 560
         },
-        "max_bullets": 50
+        "max_bullets": 1
     },
     "enemy_basic_fire":{
         "frequency": 5,
@@ -14,14 +14,20 @@
         }
     },
     "enemy_steering":{
-        "time_steering":4,
+        "returning_vel":50,
+        "gravity":100,
+        "time_to_recalcule":0.7,
+        "time_steering":3,
         "enemies_to_steering" :{
             "min": 1,
             "max": 3
         },
         "fire":{
-            "time_to_fire": 1.5,
-            "time_between_bullets":0.3,
+            "time_to_fire": {
+                "min": 0.5,
+                "max": 1.5
+            },
+            "time_between_bullets":0.15,
             "bullets" :{
                 "min": 1,
                 "max": 3

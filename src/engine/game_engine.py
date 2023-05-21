@@ -162,8 +162,6 @@ class GameEngine:
         for i in range(1,stars_number):
             
             y_position = random.randint(0, y_window_zize)
-            
-            
             x_position = current_x_position + x_delta
             create_start(self.ecs_world, star_pos=pygame.Vector2(x_position, y_position), star_info= self.star_field_cfg)    
             current_x_position = x_position
