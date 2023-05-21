@@ -4,6 +4,7 @@ import esper
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
+from src.ecs.components.tags.c_tag_enemy_new import CTagEnemyNew
 from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.create.prefab_creator import create_player_explosion
 
@@ -20,7 +21,7 @@ def system_collision_player_enemy(world: esper.World, player_entity: int,
     - explosion_info (dict): A dictionary containing the information needed to create an explosion effect.
     """
     
-    components = world.get_components(CSurface, CTransform, CTagEnemy)
+    components = world.get_components(CSurface, CTransform, CTagEnemyNew)
     pl_t = world.component_for_entity(player_entity, CTransform)
     pl_s = world.component_for_entity(player_entity, CSurface)
     
@@ -38,3 +39,4 @@ def system_collision_player_enemy(world: esper.World, player_entity: int,
             pl_t.pos.x = level_cfg["player_spawn"]["position"]["x"] - pl_s.area.w / 2
             pl_t.pos.y = level_cfg["player_spawn"]["position"]["y"] - pl_s.area.h / 2
             create_player_explosion(world, c_t.pos, explosion_info)
+            pl_tp.discount_life()

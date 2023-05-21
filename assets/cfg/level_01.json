@@ -13,6 +13,21 @@
             "max": 4
         }
     },
+    "enemy_steering":{
+        "time_steering":4,
+        "enemies_to_steering" :{
+            "min": 1,
+            "max": 3
+        },
+        "fire":{
+            "time_to_fire": 1.5,
+            "time_between_bullets":0.3,
+            "bullets" :{
+                "min": 1,
+                "max": 3
+            }
+        }
+    },
     "enemies": [
         {
             "enemy_type": "Type04",

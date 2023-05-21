@@ -4,13 +4,16 @@ import esper
 
 from src.ecs.components.c_enemy_spawner import CEnemySpawner
 from src.ecs.components.c_enemy_spawner_new import CEnemySpawnerNew
+from src.ecs.components.c_enemy_steering_fire import CEnemySteeringFire
 from src.ecs.components.c_input_command import CInputCommand
+from src.ecs.components.c_steering import CSteering
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.components.tags.c_tag_enemy_bullet import CTagEnemyBullet
-from src.ecs.components.tags.c_tag_enemy_new import CTagEnemyNew
+from src.ecs.components.tags.c_tag_enemy_new import CTagEnemyNew 
+from src.ecs.components.tags.c_tag_grouped_enemy import CTagGroupEnemy
 from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.components.tags.c_tag_score_text import CTagScoreText
 from src.ecs.components.tags.c_tag_lifes import CTagLifes
@@ -53,6 +56,7 @@ def create_sprite(world: esper.World, pos: pygame.Vector2, vel: pygame.Vector2,
 
 def create_sprite(world: esper.World, pos: pygame.Vector2, vel: pygame.Vector2,
                   surface: pygame.Surface) -> int:
+    
     sprite_entity = world.create_entity()
     surf = CSurface.from_surface(surface)
     
@@ -96,7 +100,11 @@ def create_enemy_new_by_type(world: esper.World, pos_in: pygame.Vector2, enemy_i
     world.add_component(enemy_entity, CEnemyState(pos))
     world.add_component(enemy_entity,
                         CAnimation(enemy_info["animations"]))
+    
     world.add_component(enemy_entity, CTagEnemyNew(type, pos.copy(), enemy_info["score"]))
+
+    world.add_component(enemy_entity, CTagGroupEnemy())
+ 
 
 def create_enemy_hunter(world: esper.World, pos: pygame.Vector2, enemy_info: dict):
     enemy_surface = ServiceLocator.images_service.get(path = enemy_info["image"])
@@ -129,7 +137,8 @@ def create_input_player(world: esper.World):
     input_down = world.create_entity()
     space_down = world.create_entity()
     input_z = world.create_entity()
-
+    steering = world.create_entity()
+    
     world.add_component(input_left,
                         CInputCommand("PLAYER_LEFT", pygame.K_LEFT))
     world.add_component(input_right,
@@ -137,9 +146,11 @@ def create_input_player(world: esper.World):
     world.add_component(input_z,
                         CInputCommand("PLAYER_Z", pygame.K_z))
 
-    input_fire = world.create_entity()
-    world.add_component(input_fire,
-                        CInputCommand("PLAYER_FIRE", pygame.BUTTON_LEFT))
+    world.add_component(input_z,
+                        CInputCommand("PLAYER_Z", pygame.K_z))
+    
+    world.add_component(steering,
+                        CInputCommand("TOGGLE_STEERING_DEBUG", pygame.K_LCTRL))
 
 def create_start(world: esper.World,
                  star_pos: pygame.Vector2,
@@ -214,7 +225,8 @@ def create_bullet(world: esper.World,
 def create_enemy_bullet(world: esper.World,
                   enemy_pos: pygame.Vector2,
                   enemy_size: pygame.Vector2,
-                  enemy_bullet_info: dict):
+                  enemy_bullet_info: dict,
+                  direction: pygame.Vector2 =pygame.Vector2(0,1) ):
      
          
     # Calculamos la posición en que debe aparecer la bala(pos es un vector)
@@ -223,9 +235,9 @@ def create_enemy_bullet(world: esper.World,
  
     
     col=pygame.Color(enemy_bullet_info["color"]["r"],enemy_bullet_info["color"]["g"],enemy_bullet_info["color"]["b"])
-    
+    vel = direction*enemy_bullet_info["velocity"]
     bullet_entity = create_square(world, size=pygame.Vector2(enemy_bullet_info["size"]["w"], enemy_bullet_info["size"]["h"]),
-                  pos=pos, vel=pygame.Vector2(0,enemy_bullet_info["velocity"]), col=col)
+                  pos=pos, vel=vel, col=col)
 
     
     # Añadimos el componente al mundo
@@ -336,7 +348,6 @@ def create_level_info(world: esper.World, interface_info: dict, dead_enemies: in
 def create_player_square(world: esper.World, player_info: dict, player_lvl_info: dict) -> int:
     print(f"creando jugador con vidas {player_info['lifes']}")
     player_sprite = ServiceLocator.images_service.get(path = player_info["image"])
-    
     new_size = (50, 50)
     
     scaled_surface = pygame.transform.scale(player_sprite, new_size)
@@ -352,6 +363,8 @@ def create_player_square(world: esper.World, player_info: dict, player_lvl_info:
     world.add_component(player_entity,
                         CAnimation(player_info["animations"]))
     world.add_component(player_entity, CPlayerState())
+    
+    
     return player_entity
 
 def create_level_square(world: esper.World, interface_info: dict) -> int:

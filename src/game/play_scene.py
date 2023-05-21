@@ -1,6 +1,12 @@
 import json
 import pygame
+from src.ecs.components.c_enemy_choose_steering import CEnemyChooseSteering
 from src.ecs.components.tags.c_tag_player import CTagPlayer
+from src.ecs.systems.debug.s_steering_draw_debug import system_steering_draw_debug
+from src.ecs.systems.s_choise_enemy_steering import system_choose_enemy_steering
+from src.ecs.systems.s_collision_enemy_screen import system_collision_enemy_screen
+from src.ecs.systems.s_enemy_steering import system_enemy_steering
+from src.ecs.systems.s_enemy_steering_fire import system_enemy_steering_fire
 
 from src.engine.scenes.scene import Scene
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
@@ -84,7 +90,7 @@ class PlayScene(Scene):
 
     def do_create(self):
         enemy_basic_fire = self.ecs_world.create_entity()
-
+        self._steering_debug = False
         self.ecs_world.add_component(enemy_basic_fire,
                          CEnemyBasicFire(self.level_01_cfg["enemy_basic_fire"]))
         self._game_info_entity = create_score_info(self.ecs_world, self.interface_cfg)
@@ -158,8 +164,13 @@ class PlayScene(Scene):
             system_screen_player(self.ecs_world, self.screen)
             
             system_screen_bullet(self.ecs_world, self.screen)
+            
             if self.is_ready:
+                system_choose_enemy_steering(self.ecs_world,self.level_01_cfg["enemy_steering"], delta_time)
+                system_enemy_steering(self.ecs_world, None, delta_time)
+                system_collision_enemy_screen(self.ecs_world, self.screen)
                 system_basic_enemy_fire(self.ecs_world,delta_time, self.level_01_cfg["enemy_basic_fire"],self.bullet_cfg["enemy"])
+                system_enemy_steering_fire(self.ecs_world, delta_time,self.bullet_cfg["enemy"])
                 system_collision_player_bullet(self.ecs_world, self._player_entity,
                                     self.level_01_cfg,self.explosion_cfg)
                 system_collision_enemy_bullet(self.ecs_world, self.explosion_cfg, self._player_entity)
@@ -172,7 +183,7 @@ class PlayScene(Scene):
                 system_player_state(self.ecs_world)
                 system_up_level_game(self.ecs_world, self.explosion_cfg, self._player_entity, self.game_start_cfg, self.level_01_cfg)
                 
-                
+                system_collision_player_enemy(self.ecs_world, self._player_entity,self.level_01_cfg,self.explosion_cfg)         
                 
             #system_enemy_hunter_state(self.ecs_world, self._player_entity, self.enemies_cfg["TypeHunter"])
 
@@ -199,10 +210,9 @@ class PlayScene(Scene):
 
                 elif c_input.phase == CommandPhase.END and self._player_right_start:
                     self._player_c_v.vel.x -= self.player_cfg["input_velocity"]
-
-             
                 
-            
+            if c_input.name == "TOGGLE_STEERING_DEBUG" and c_input.phase == CommandPhase.START: 
+                self._steering_debug = not self._steering_debug    
             if c_input.name == "PLAYER_Z" and self.num_bullets < self.level_01_cfg["player_spawn"]["max_bullets"]:
                 if not self.is_paused:
                     create_bullet(self.ecs_world, self._player_c_t.pos,
@@ -240,6 +250,11 @@ class PlayScene(Scene):
         self._player_c_t = self.ecs_world.component_for_entity(self._player_entity, CTransform)
         self._player_c_s = self.ecs_world.component_for_entity(self._player_entity, CSurface)
                    
+    def _create_steerling(self):
+        steering_choose_entity = self.ecs_world.create_entity()
+        self.ecs_world.add_component(steering_choose_entity,CEnemyChooseSteering(self.level_01_cfg) )
+        
+ 
     def _is_level_ready(self,world: esper.World):
             components = world.get_component(CReadyLevel)
             c_rl: CReadyLevel
@@ -249,6 +264,8 @@ class PlayScene(Scene):
                 self.is_ready = c_rl.ready
                 if self.is_ready and not c_rl.player_showed:
                     self._create_player()
+                    self._create_steerling()
+                    
                     c_rl.player_showed = True
 
 
@@ -261,3 +278,9 @@ class PlayScene(Scene):
         for _, (c_p) in components:
             if c_p.current_lifes ==0:
                 self.switch_scene(Scene.Scenes.GAME_OVER_SCENE)
+
+
+    def do_draw(self, screen):
+        super().do_draw(screen)
+        if self._steering_debug:
+            system_steering_draw_debug(self.ecs_world, screen)
