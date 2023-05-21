@@ -1,21 +1,32 @@
 {
     "font": "assets/fnt/PressStart2P.ttf",
-    "score_level": "1-UP",
+    "score_lavel": {
+        "text": "1-UP",
+        "position":{
+            "x": 20,
+            "y": 13
+        },
+        "color": {
+            "R":144,
+            "G": 12,
+            "B": 63
+        }
+    },
     "instructions": "P: Pausar el juego. Nùmero de enemigos para desapacer uno: ",
     "text_color": {
         "R": 255,
         "G": 255,
         "B": 255
     },
-    "score_title": {
-        "R":144,
-        "G": 12,
-        "B": 63
-    },
     "score": {
-        "R":255,
-        "G": 255,
-        "B": 255
+        "color": {
+            "R":255,
+            "G": 255,
+            "B": 255
+        },
+        "position": {
+            "y": 40 
+        }
     },
 
     "text_color_ready_power": {
@@ -26,5 +37,10 @@
     "text_size": 10,
     "level_image": "assets/img/invaders_level_flag.png",
     "life_image": "assets/img/invaders_life.png",
+    "level_info_position": {
+        "x" : 435,
+        "y" : 20
+    },
+    "level_number_to_show_number": 3,
     "active_power": "Poder activado"
 }

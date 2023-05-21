@@ -15,7 +15,7 @@ from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.components.tags.c_tag_score_text import CTagScoreText
 from src.ecs.components.tags.c_tag_lifes import CTagLifes
 from src.ecs.components.tags.c_tag_star import CTagStar
-from src.ecs.components.tags.c_tag_text import CTagText
+from src.ecs.components.tags.c_tag_level import CTagLevel
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.components.tags.c_tag_explosion import CTagExplosion
 from src.ecs.components.c_animation import CAnimation
@@ -270,9 +270,9 @@ def create_score_info(world: esper.World, interface_info: dict) -> int:
     
     text_surface = ServiceLocator.fonts_service.get(font = interface_info["font"], size= interface_info["text_size"])
     
-    player_sprite = text_surface.render(interface_info["score_level"], True, (interface_info["score_title"]["R"],interface_info["score_title"]["G"],interface_info["score_title"]["B"]))
+    player_sprite = text_surface.render(interface_info["score_lavel"]["text"], True, (interface_info["score_lavel"]["color"]["R"],interface_info["score_lavel"]["color"]["G"],interface_info["score_lavel"]["color"]["B"]))
     
-    pos = pygame.Vector2(20,20)
+    pos = pygame.Vector2(interface_info["score_lavel"]["position"]["x"],interface_info["score_lavel"]["position"]["y"])
     vel = pygame.Vector2(0, 0)
     game_info_entity = create_sprite(world, pos, vel, player_sprite)
 
@@ -283,9 +283,9 @@ def create_score_value(world: esper.World, interface_info: dict) -> int:
     
     text_surface = ServiceLocator.fonts_service.get(font = interface_info["font"], size= interface_info["text_size"])
     
-    player_sprite = text_surface.render("0      ", True, (interface_info["score"]["R"],interface_info["score"]["G"],interface_info["score"]["B"]))
+    player_sprite = text_surface.render("0      ", True, (interface_info["score"]["color"]["R"],interface_info["score"]["color"]["G"],interface_info["score"]["color"]["B"]))
     
-    pos = pygame.Vector2(20,40)
+    pos = pygame.Vector2(interface_info["score_lavel"]["position"]["x"],interface_info["score_lavel"]["position"]["y"]+20)
     vel = pygame.Vector2(0, 0)
     game_info_entity = create_sprite(world, pos, vel, player_sprite)
 
@@ -321,16 +321,15 @@ def create_instructions_info(world: esper.World, interface_info: dict, explosion
     world.add_component(game_info_entity, CPlayerState())
     return game_info_entity
 
-def update_level_info(world: esper.World, interface_info: dict, dead_enemies: int) -> int:
+def create_level_info(world: esper.World, interface_info: dict, dead_enemies: int) -> int:
     
-    text_surface = ServiceLocator.fonts_service.get(font = interface_info["font"], size= interface_info["text_size"])
-    player_sprite = text_surface.render(f"0    ", True, (interface_info["text_color"]["R"],interface_info["text_color"]["G"],interface_info["text_color"]["B"]))
+    player_sprite = ServiceLocator.images_service.get(path = interface_info["level_image"])
     
-    pos = pygame.Vector2(435,13)
+    pos = pygame.Vector2(interface_info["level_info_position"]["x"],interface_info["level_info_position"]["y"])
     vel = pygame.Vector2(0, 0)
     game_info_entity = create_sprite(world, pos, vel, player_sprite)
 
-    world.add_component(game_info_entity, CTagText())
+    world.add_component(game_info_entity, CTagLevel(pos=pos))
     return game_info_entity
 
 

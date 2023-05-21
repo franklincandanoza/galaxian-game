@@ -38,7 +38,7 @@ from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 
 from src.create.prefab_creator import create_input_player, create_player_square, create_bullet, create_level_square
-from src.create.prefab_creator  import create_score_info, update_level_info, create_instructions_info, create_start, create_enemy_spawner_new, create_score_value
+from src.create.prefab_creator  import create_score_info, create_level_info, create_instructions_info, create_start, create_enemy_spawner_new, create_score_value
 from src.ecs.systems.s_system_ready import system_ready_level
 from src.engine.service_locator import ServiceLocator
 
@@ -135,7 +135,7 @@ class GameEngine:
         self._game_info_entity = create_score_info(self.ecs_world, self.interface_cfg)
         self._game_info_entity = create_score_value(self.ecs_world, self.interface_cfg)
         #self._game_info_entity = create_instructions_info(self.ecs_world, self.interface_cfg, explosion_info=self.explosion_cfg)
-        self._game_dead_enemy = update_level_info(self.ecs_world, self.interface_cfg, dead_enemies=0)
+        self._game_dead_enemy = create_level_info(self.ecs_world, self.interface_cfg, dead_enemies=0)
         
         
         create_enemy_spawner_new(self.ecs_world, self.level_01_cfg)
