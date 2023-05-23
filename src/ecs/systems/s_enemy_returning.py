@@ -50,4 +50,16 @@ def _get_position_from(world:esper.World, enemy_type:str):
     return mode(lists )
 
 def mode(l):
-    return l[0]
+    frecuencias = {}
+    for numero in l:
+        frecuencias[numero] = frecuencias.get(numero, 0) + 1
+
+    # Encontrar el valor con la frecuencia máxima
+    moda = None
+    frecuencia_maxima = 0
+    for numero, frecuencia in frecuencias.items():
+        if frecuencia > frecuencia_maxima:
+            moda = numero
+            frecuencia_maxima = frecuencia
+            
+    return moda
