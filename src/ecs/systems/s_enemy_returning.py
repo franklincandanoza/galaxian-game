@@ -8,7 +8,6 @@ from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity 
 from src.ecs.components.tags.c_tag_enemy_new import CTagEnemyNew
 from src.ecs.components.tags.c_tag_grouped_enemy import CTagGroupEnemy
-from statistics import mode
 def system_enemy_returning(world:esper.World, enemy_sterling_info:dict):
     components = world.get_components(CTransform, CVelocity, CSteeringState, CTagEnemyNew,CSurface)
     
@@ -49,3 +48,6 @@ def _get_position_from(world:esper.World, enemy_type:str):
     if  not lists:
         return 0
     return mode(lists )
+
+def mode(l):
+    return l[0]
